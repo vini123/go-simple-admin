@@ -6,3 +6,8 @@ gfcli:
     build: "-a amd64 -s linux -p temp -ew"
     tagPrefixes:
       - my.image.pub/my-app
+
+  gen:
+    dao:
+    - link:  "mysql:homestead:secret@tcp(192.168.56.56:3306)/go-simple-admin"
+      tables: "user"
