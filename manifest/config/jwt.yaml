@@ -1,0 +1,4 @@
+jwt:
+  expire_time: 120          # 过期时间，单位是分钟
+  max_refresh_time: 86400   # 允许刷新时间，单位是分钟 86400 为两个月
+  sign_key: 'xxxxxxxx'

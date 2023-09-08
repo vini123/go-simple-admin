@@ -5,5 +5,6 @@
 package logic
 
 import (
+	_ "goSimpleAdmin/internal/logic/middleware"
 	_ "goSimpleAdmin/internal/logic/user"
 )

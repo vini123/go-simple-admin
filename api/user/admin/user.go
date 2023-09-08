@@ -34,3 +34,13 @@ type SignUpReq struct {
 type SignUpRes struct {
 	model.SignUpRes
 }
+
+// 用户信息
+type UserInfoReq struct {
+	g.Meta `path:"/user/info" method:"get" tags:"UserService" summary:"get userinfo"`
+	model.UserInfoReq
+}
+
+type UserInfoRes struct {
+	model.UserInfoRes
+}

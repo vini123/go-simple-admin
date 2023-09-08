@@ -15,6 +15,7 @@ type (
 		SignIn(ctx context.Context, in model.SignInReq) (res model.SignInRes, err error)
 		SignUp(ctx context.Context, in model.SignUpReq) (res model.SignUpRes, err error)
 		Captcha(ctx context.Context, in model.CaptchaReq) (res model.CaptchaRes, err error)
+		UserInfo(ctx context.Context, in model.UserInfoReq) (res model.UserInfoRes, err error)
 	}
 )
 

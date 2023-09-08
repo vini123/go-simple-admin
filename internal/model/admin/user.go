@@ -1,5 +1,10 @@
 package model
 
+import (
+	"goSimpleAdmin/internal/model/entity"
+	"time"
+)
+
 // 图片验证码
 type CaptchaReq struct{}
 
@@ -15,7 +20,8 @@ type SignInReq struct {
 }
 
 type SignInRes struct {
-	Token string `json:"token"`
+	Token  string    `json:"token"`
+	Expire time.Time `json:"expire"`
 }
 
 // 注册
@@ -28,5 +34,13 @@ type SignUpReq struct {
 }
 
 type SignUpRes struct {
-	Token string `json:"token"`
+	Token  string    `json:"token"`
+	Expire time.Time `json:"expire"`
+}
+
+// 获取用户信息
+type UserInfoReq struct{}
+
+type UserInfoRes struct {
+	entity.User
 }
