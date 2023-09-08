@@ -7,14 +7,14 @@ package service
 
 import (
 	"context"
-	"goSimpleAdmin/internal/model"
+	model "goSimpleAdmin/internal/model/admin"
 )
 
 type (
 	IUser interface {
-		SignIn(ctx context.Context, in model.SignInInput) (err error)
-		SignUp(ctx context.Context, in model.SignUpInput) (err error)
-		Captcha(ctx context.Context, in model.CaptchaInput) (err error)
+		SignIn(ctx context.Context, in model.SignInReq) (res model.SignInRes, err error)
+		SignUp(ctx context.Context, in model.SignUpReq) (res model.SignUpRes, err error)
+		Captcha(ctx context.Context, in model.CaptchaReq) (res model.CaptchaRes, err error)
 	}
 )
 

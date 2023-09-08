@@ -4,12 +4,12 @@ import (
 	"context"
 
 	"goSimpleAdmin/api/user/admin"
-	"goSimpleAdmin/internal/model"
+	model "goSimpleAdmin/internal/model/admin"
 	"goSimpleAdmin/internal/service"
 )
 
 func (c *ControllerAdmin) SignUp(ctx context.Context, req *admin.SignUpReq) (res *admin.SignUpRes, err error) {
-	service.User().SignUp(ctx, model.SignUpInput{
+	service.User().SignUp(ctx, model.SignUpReq{
 		Nickname:   req.Nickname,
 		Passport:   req.Passport,
 		Password:   req.Password,

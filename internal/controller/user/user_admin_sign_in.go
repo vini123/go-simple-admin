@@ -4,14 +4,21 @@ import (
 	"context"
 
 	"goSimpleAdmin/api/user/admin"
-	"goSimpleAdmin/internal/model"
+	model "goSimpleAdmin/internal/model/admin"
 	"goSimpleAdmin/internal/service"
 )
 
 func (c *ControllerAdmin) SignIn(ctx context.Context, req *admin.SignInReq) (res *admin.SignInRes, err error) {
-	service.User().SignIn(ctx, model.SignInInput{
+	data, err := service.User().SignIn(ctx, model.SignInReq{
 		Passport: req.Passport,
 		Password: req.Passport,
 	})
+
+	if err != nil {
+		return
+	}
+
+	res = new(admin.SignInRes)
+	res.SignInRes = data
 	return
 }
