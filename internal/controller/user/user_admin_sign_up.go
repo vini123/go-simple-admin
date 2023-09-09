@@ -9,12 +9,19 @@ import (
 )
 
 func (c *ControllerAdmin) SignUp(ctx context.Context, req *admin.SignUpReq) (res *admin.SignUpRes, err error) {
-	service.User().SignUp(ctx, model.SignUpReq{
+	data, err := service.User().SignUp(ctx, model.SignUpReq{
 		Nickname:   req.Nickname,
-		Passport:   req.Passport,
+		Account:    req.Account,
 		Password:   req.Password,
 		VerifyKey:  req.VerifyKey,
 		VerifyCode: req.VerifyCode,
 	})
-	return
+
+	if err != nil {
+		return
+	}
+
+	res = new(admin.SignUpRes)
+	res.SignUpRes = data
+	return res, err
 }

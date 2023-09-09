@@ -9,6 +9,7 @@ import (
 	"goSimpleAdmin/internal/pkg/captcha"
 	"goSimpleAdmin/internal/pkg/hash"
 	"goSimpleAdmin/internal/pkg/jwt"
+	"goSimpleAdmin/internal/pkg/utils"
 	"goSimpleAdmin/internal/service"
 
 	"github.com/gogf/gf/v2/errors/gerror"
@@ -28,11 +29,11 @@ func New() service.IUser {
 func (s *sUser) SignIn(ctx context.Context, in model.SignInReq) (res model.SignInRes, err error) {
 	var user *entity.User
 	err = dao.User.Ctx(ctx).Where(do.User{
-		Passport: in.Passport,
+		Account: in.Account,
 	}).WhereOr(do.User{
-		Email: in.Passport,
+		Email: in.Account,
 	}).WhereOr(do.User{
-		Phone: in.Passport,
+		Phone: in.Account,
 	}).Scan(&user)
 
 	if err != nil {
@@ -48,19 +49,85 @@ func (s *sUser) SignIn(ctx context.Context, in model.SignInReq) (res model.SignI
 		return res, gerror.New("账号或密码错误")
 	}
 
-	data := g.Map{
+	payloadData := g.Map{
 		"id":       user.Id,
 		"nickname": user.Nickname,
 	}
 
-	res.Token, res.Expire, err = jwt.NewJwt().TokenGenerator(data)
+	res.Token, res.Expire, err = jwt.NewJwt().TokenGenerator(payloadData)
 
 	return res, err
 }
 
 func (s *sUser) SignUp(ctx context.Context, in model.SignUpReq) (res model.SignUpRes, err error) {
+	verifyCode := in.VerifyCode
+	verifyKey := in.VerifyKey
+	match := captcha.NewCaptcha(ctx).VerifyCaptcha(verifyKey, verifyCode)
 
-	err = gerror.New("我的地呀")
+	if !match {
+		err = gerror.New("验证码不正确或已过期")
+		return
+	}
+
+	record, err := dao.User.Ctx(ctx).Where(do.User{
+		Account: in.Account,
+	}).WhereOr(do.User{
+		Phone: in.Account,
+	}).WhereOr(do.User{
+		Email: in.Account,
+	}).One()
+
+	if err != nil {
+		err = gerror.New("请稍后再试")
+		return
+	}
+
+	if !record.IsEmpty() {
+		err = gerror.New("账号已经存在")
+		return
+	}
+
+	data := do.User{
+		Account:  in.Account,
+		Password: in.Password,
+		Nickname: in.Nickname,
+	}
+
+	if utils.IsPhone(in.Account) {
+		data.Phone = in.Account
+	}
+
+	if utils.IsEmail(in.Account) {
+		data.Email = in.Account
+	}
+
+	lastInsertId, err := dao.User.Ctx(ctx).Data(data).InsertAndGetId()
+	if err != nil {
+		err = gerror.New("请稍后再试")
+		return
+	}
+
+	var user *entity.User
+	err = dao.User.Ctx(ctx).Where(do.User{
+		Id: lastInsertId,
+	}).Scan(&user)
+
+	if err != nil {
+		err = gerror.New("请稍后再试")
+		return
+	}
+
+	if user == nil {
+		err = gerror.New("请稍后再试")
+		return
+	}
+
+	payloadData := g.Map{
+		"id":       user.Id,
+		"nickname": user.Nickname,
+	}
+
+	res.Token, res.Expire, err = jwt.NewJwt().TokenGenerator(payloadData)
 
 	return res, err
 }

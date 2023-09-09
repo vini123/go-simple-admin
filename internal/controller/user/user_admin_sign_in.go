@@ -10,7 +10,7 @@ import (
 
 func (c *ControllerAdmin) SignIn(ctx context.Context, req *admin.SignInReq) (res *admin.SignInRes, err error) {
 	data, err := service.User().SignIn(ctx, model.SignInReq{
-		Passport: req.Passport,
+		Account:  req.Account,
 		Password: req.Password,
 	})
 

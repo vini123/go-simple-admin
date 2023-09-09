@@ -18,6 +18,8 @@ var once sync.Once
 
 var captcha *Captcha
 
+var captchaStore *RedisStore
+
 type CaptchaConfig struct {
 	Width      int     `json:"width"`
 	Height     int     `json:"Height"`
@@ -30,9 +32,7 @@ type CaptchaConfig struct {
 func NewCaptcha(ctx context.Context) *Captcha {
 	once.Do(func() {
 		captcha = &Captcha{}
-
-		store := RedisStore{
-			Ctx:       ctx,
+		captchaStore = &RedisStore{
 			KeyPrefix: consts.REDIS_PREFIX + ":captcha:",
 		}
 
@@ -52,8 +52,9 @@ func NewCaptcha(ctx context.Context) *Captcha {
 			captchaConfig.Dotcount,
 		)
 
-		captcha.Base64Captcha = base64Captcha.NewCaptcha(driver, &store)
+		captcha.Base64Captcha = base64Captcha.NewCaptcha(driver, captchaStore)
 	})
+	captchaStore.Ctx = ctx
 
 	return captcha
 }

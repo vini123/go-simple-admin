@@ -27,7 +27,7 @@ type SignInRes struct {
 
 // 注册（只需要数字验证码就可以）
 type SignUpReq struct {
-	g.Meta `path:"/user/sing-up" method:"post" tags:"UserService" summary:"user sign up"`
+	g.Meta `path:"/user/sign-up" method:"post" tags:"UserService" summary:"user sign up"`
 	model.SignUpReq
 }
 

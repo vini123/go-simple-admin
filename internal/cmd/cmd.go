@@ -26,8 +26,8 @@ var (
 
 				group.ALLMap(g.Map{
 					"/captcha":      user.NewAdmin().Captcha,
-					"/user/sing-in": user.NewAdmin().SignIn,
-					"/user/sing-up": user.NewAdmin().SignUp,
+					"/user/sign-in": user.NewAdmin().SignIn,
+					"/user/sign-up": user.NewAdmin().SignUp,
 				})
 
 				group.Group("/", func(group *ghttp.RouterGroup) {
