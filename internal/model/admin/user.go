@@ -7,6 +7,12 @@ import (
 	"time"
 )
 
+// 这里使用 entity 的组合
+type User struct {
+	entity.Users
+	UserExtends *entity.UserExtends `orm:"with:user_id=id" json:"user_extends"`
+}
+
 // 图片验证码
 type CaptchaReq struct{}
 
@@ -44,5 +50,5 @@ type SignUpRes struct {
 type UserInfoReq struct{}
 
 type UserInfoRes struct {
-	entity.User
+	User
 }

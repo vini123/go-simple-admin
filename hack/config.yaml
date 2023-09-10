@@ -10,4 +10,4 @@ gfcli:
   gen:
     dao:
     - link:  "mysql:homestead:secret@tcp(192.168.56.56:3306)/go-simple-admin"
-      tables: "user"
+      tables: "users,user_extends"

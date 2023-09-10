@@ -8,19 +8,19 @@ import (
 	"goSimpleAdmin/internal/dao/internal"
 )
 
-// internalUserDao is internal type for wrapping internal DAO implements.
-type internalUserDao = *internal.UserDao
+// internalUsersDao is internal type for wrapping internal DAO implements.
+type internalUsersDao = *internal.UsersDao
 
-// userDao is the data access object for table user.
+// usersDao is the data access object for table users.
 // You can define custom methods on it to extend its functionality as you wish.
-type userDao struct {
-	internalUserDao
+type usersDao struct {
+	internalUsersDao
 }
 
 var (
-	// User is globally public accessible object for table user operations.
-	User = userDao{
-		internal.NewUserDao(),
+	// Users is globally public accessible object for table users operations.
+	Users = usersDao{
+		internal.NewUsersDao(),
 	}
 )
 

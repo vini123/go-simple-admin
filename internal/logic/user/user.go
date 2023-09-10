@@ -5,7 +5,6 @@ import (
 	"goSimpleAdmin/internal/dao"
 	model "goSimpleAdmin/internal/model/admin"
 	"goSimpleAdmin/internal/model/do"
-	"goSimpleAdmin/internal/model/entity"
 	"goSimpleAdmin/internal/pkg/captcha"
 	"goSimpleAdmin/internal/pkg/hash"
 	"goSimpleAdmin/internal/pkg/jwt"
@@ -27,12 +26,12 @@ func New() service.IUser {
 }
 
 func (s *sUser) SignIn(ctx context.Context, in model.SignInReq) (res model.SignInRes, err error) {
-	var user *entity.User
-	err = dao.User.Ctx(ctx).Where(do.User{
+	var user *model.User
+	err = dao.Users.Ctx(ctx).Where(do.Users{
 		Account: in.Account,
-	}).WhereOr(do.User{
+	}).WhereOr(do.Users{
 		Email: in.Account,
-	}).WhereOr(do.User{
+	}).WhereOr(do.Users{
 		Phone: in.Account,
 	}).Scan(&user)
 
@@ -69,11 +68,11 @@ func (s *sUser) SignUp(ctx context.Context, in model.SignUpReq) (res model.SignU
 		return
 	}
 
-	record, err := dao.User.Ctx(ctx).Where(do.User{
+	record, err := dao.Users.Ctx(ctx).Where(do.Users{
 		Account: in.Account,
-	}).WhereOr(do.User{
+	}).WhereOr(do.Users{
 		Phone: in.Account,
-	}).WhereOr(do.User{
+	}).WhereOr(do.Users{
 		Email: in.Account,
 	}).One()
 
@@ -87,7 +86,7 @@ func (s *sUser) SignUp(ctx context.Context, in model.SignUpReq) (res model.SignU
 		return
 	}
 
-	data := do.User{
+	data := do.Users{
 		Account:  in.Account,
 		Password: in.Password,
 		Nickname: in.Nickname,
@@ -101,14 +100,14 @@ func (s *sUser) SignUp(ctx context.Context, in model.SignUpReq) (res model.SignU
 		data.Email = in.Account
 	}
 
-	lastInsertId, err := dao.User.Ctx(ctx).Data(data).InsertAndGetId()
+	lastInsertId, err := dao.Users.Ctx(ctx).Data(data).InsertAndGetId()
 	if err != nil {
 		err = gerror.New("请稍后再试")
 		return
 	}
 
-	var user *entity.User
-	err = dao.User.Ctx(ctx).Where(do.User{
+	var user *model.User
+	err = dao.Users.Ctx(ctx).Where(do.Users{
 		Id: lastInsertId,
 	}).Scan(&user)
 
@@ -145,11 +144,11 @@ func (s *sUser) Captcha(ctx context.Context, in model.CaptchaReq) (res model.Cap
 }
 
 func (s *sUser) UserInfo(ctx context.Context, in model.UserInfoReq) (res model.UserInfoRes, err error) {
-	var user *entity.User
+	var user *model.User
 
 	id := jwt.NewJwt().GetIdentity(ctx)
 
-	err = dao.User.Ctx(ctx).Where(do.User{
+	err = dao.Users.Ctx(ctx).WithAll().Where(do.Users{
 		Id: id,
 	}).Scan(&user)
 
