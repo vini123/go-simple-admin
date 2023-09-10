@@ -7,10 +7,17 @@ import (
 	"time"
 )
 
-// 这里使用 entity 的组合
 type User struct {
 	entity.Users
-	UserExtends *entity.UserExtends `orm:"with:user_id=id" json:"user_extends"`
+	UserExtends *entity.UserExtends      `orm:"with:user_id=id" json:"user_extends"`
+	Roles       []map[string]interface{} `json:"roles,omitempty"`
+	Permissions []Permission             `json:"permissions,omitempty"`
+}
+
+// 用户权限
+type Permission struct {
+	entity.Permissions
+	Permission []Permission `json:"permission,omitempty"`
 }
 
 // 图片验证码

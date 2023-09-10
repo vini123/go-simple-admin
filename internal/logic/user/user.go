@@ -13,6 +13,7 @@ import (
 
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type sUser struct{}
@@ -148,14 +149,55 @@ func (s *sUser) UserInfo(ctx context.Context, in model.UserInfoReq) (res model.U
 
 	id := jwt.NewJwt().GetIdentity(ctx)
 
+	// 用户的基本信息
 	err = dao.Users.Ctx(ctx).WithAll().Where(do.Users{
 		Id: id,
 	}).Scan(&user)
-
 	if err != nil {
-		return res, err
+		return
+	}
+	res.User = *user
+
+	// 所有角色
+	sql := `SELECT r.id, r.name, r.title FROM roles as r 
+			LEFT JOIN model_has_roles as mr ON r.id = mr.role_id
+			WHERE mr.model_id = ` + gconv.String(user.Id)
+	result, err := g.DB().Query(ctx, sql)
+	if err != nil {
+		return
+	}
+	res.Roles = result.List()
+
+	// 用户拥有的权限
+	sql = `SELECT DISTINCT p.id,p.guard_name,p.name,p.icon, p.title, p.path,p.parent_id,p.hidden,p.always_show,p.component,p.link,p.iframe,p.redirect,p.order FROM permissions AS p
+			LEFT JOIN role_has_permissions AS rp ON rp.permission_id = p.id
+			LEFT JOIN model_has_roles AS mr ON mr.role_id = rp.role_id
+			LEFT JOIN users AS u ON u.id = mr.model_id
+			WHERE u.id =` + gconv.String(user.Id)
+
+	result, err = g.DB().Query(ctx, sql)
+	if err != nil {
+		return
 	}
 
-	res.User = *user
+	var ps []model.Permission
+	err = result.Structs(&ps)
+	if err != nil {
+		return
+	}
+	res.Permissions = transPermissions(ps, 0)
+
 	return res, err
+}
+
+// 将权限递归处理一下
+func transPermissions(ps []model.Permission, parent_id uint64) []model.Permission {
+	temp := []model.Permission{}
+	for _, item := range ps {
+		if item.ParentId == parent_id {
+			item.Permission = transPermissions(ps, item.Id)
+			temp = append(temp, item)
+		}
+	}
+	return temp
 }
