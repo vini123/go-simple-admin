@@ -13,6 +13,7 @@ type (
 	IMiddleware interface {
 		Auth(r *ghttp.Request)
 		CORS(r *ghttp.Request)
+		Resp(r *ghttp.Request)
 	}
 )
 

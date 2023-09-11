@@ -29,3 +29,9 @@ func (s *sMiddleware) CORS(r *ghttp.Request) {
 	r.Response.CORSDefault()
 	r.Middleware.Next()
 }
+
+func (s *sMiddleware) Resp(r *ghttp.Request) {
+	r.Middleware.Next()
+
+	Resp(r)
+}

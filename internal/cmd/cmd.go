@@ -17,11 +17,11 @@ var (
 		Brief: "start http server",
 		Func: func(ctx context.Context, parser *gcmd.Parser) (err error) {
 			s := g.Server()
-			s.Use(ghttp.MiddlewareHandlerResponse)
+			s.Use(service.Middleware().Resp)
 
 			s.Group("/api/admin", func(group *ghttp.RouterGroup) {
 				group.Middleware(
-					ghttp.MiddlewareCORS,
+					service.Middleware().CORS,
 				)
 
 				group.ALLMap(g.Map{

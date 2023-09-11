@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"context"
+	"goSimpleAdmin/internal/pkg/response"
 	"sync"
 	"time"
 
@@ -67,11 +68,9 @@ func IdentityHandler(ctx context.Context) interface{} {
 
 func Unauthorized(ctx context.Context, code int, message string) {
 	r := g.RequestFromCtx(ctx)
-	r.Response.WriteJson(g.Map{
-		"code":    code,
+	response.Json(r, 401, g.Map{
 		"message": message,
 	})
-	r.ExitAll()
 }
 
 // Authenticator is used to validate login parameters.
