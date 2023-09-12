@@ -26,15 +26,7 @@ func (s *sMiddleware) Auth(r *ghttp.Request) {
 }
 
 func (s *sMiddleware) CORS(r *ghttp.Request) {
-	corsOptions := r.Response.DefaultCORSOptions()
-	corsOptions.AllowDomain = []string{"localhost:5173"}
-	corsOptions.AllowOrigin = "http://localhost:5174"
-	corsOptions.AllowCredentials = "false"
-	corsOptions.AllowMethods = "POST,GET,OPTIONS,PUT,PATCH,DELETE"
-	corsOptions.AllowHeaders = "Accept,Content-Type,Referer,User-Agent,Origin,X-Requested-With,X-XSRF-TOKEN,X-CSRF-TOKEN,Authorization,Time"
-	r.Response.CORS(corsOptions)
-
-	// r.Response.CORSDefault()
+	CORS(r)
 
 	r.Middleware.Next()
 }
