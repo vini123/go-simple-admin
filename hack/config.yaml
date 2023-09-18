@@ -12,3 +12,14 @@ gfcli:
     - link:  "mysql:homestead:secret@tcp(192.168.56.56:3306)/go-simple-admin"
       jsonCase: "Snake"
       tables: "users,user_extends,permissions,roles"
+  
+  build:
+    name:     "main"
+    arch:     "amd64"
+    system:   "linux"
+    mod:      "none"
+    packSrc:  "resource,manifest"
+    version:  "v1.0.0"
+    output:   "./out"
+    cgo:      0
+    extra:    ""
