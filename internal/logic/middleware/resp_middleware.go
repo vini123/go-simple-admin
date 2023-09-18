@@ -24,6 +24,7 @@ func Resp(r *ghttp.Request) {
 	status[http.StatusForbidden] = http.StatusForbidden
 	status[http.StatusTooManyRequests] = http.StatusTooManyRequests
 	status[http.StatusInternalServerError] = http.StatusInternalServerError
+	status[http.StatusNotFound] = http.StatusNotFound
 
 	// err 存在，错误码暂时都为 403（403,500 不处理应该都在里边，后边要分开）
 	// err 存在，res 单独定义
@@ -38,6 +39,12 @@ func Resp(r *ghttp.Request) {
 		} else {
 			if _, ok := status[r.Response.Status]; ok {
 				httpStatus = status[r.Response.Status]
+			}
+
+			if httpStatus == http.StatusNotFound {
+				res = g.Map{
+					"message": "接口跑到月球啦",
+				}
 			}
 		}
 	}
